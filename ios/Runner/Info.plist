@@ -43,5 +43,38 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+
+	<!-- geolocator -->
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>This app needs access to location when open.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>This app needs access to location when in the background.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>This app needs access to location when open and in the background.</string>
+
+	<!-- naver map plugin -->
+	<key>NMFClientId</key>
+	<string>YOUR_CLIENT_ID_HERE</string>
+	<key>io.flutter.embedded_views_preview</key>
+	<true/>
+	<key>NSAllowsArbitraryLoads</key>
+	<true/>
+
+	<!-- <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>[USAGE PERPOSE]</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>[USAGE PERPOSE]</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>[USAGE PERPOSE]</string> -->
+
+	<!-- image picker -->
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string></string>
+	<key>NSCameraUsageDescription</key>
+	<string></string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string></string>
+
+
 </dict>
 </plist>

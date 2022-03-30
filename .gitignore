@@ -52,3 +52,6 @@ app.*.map.json
 !pages/.gitkeep
 !utils/.gitkeep
 !widgets/.gitkeep
+
+# env
+*.env

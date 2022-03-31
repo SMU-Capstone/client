@@ -27,7 +27,7 @@ apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 def Properties properties = new Properties()
 properties.load(project.rootProject.file('local.properties').newDataInputStream())
-def CLIENT_ID = localProperties.getProperty('CLIENT_ID')
+def naver_map_client_id = localProperties.getProperty('naver_map_client_id')
 
 android {
     compileSdkVersion flutter.compileSdkVersion
@@ -54,8 +54,8 @@ android {
         versionName flutterVersionName
 
         //Manifest에서 사용하기
-        manifestPlaceholders = [
-            CLIENT_ID: CLIENT_ID
+        manifestPlaceholders += [
+            naver_map_client_id: naver_map_client_id,
         ]
     }
 

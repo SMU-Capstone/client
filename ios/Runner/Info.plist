@@ -54,18 +54,18 @@
 
 	<!-- naver map plugin -->
 	<key>NMFClientId</key>
-	<string>YOUR_CLIENT_ID_HERE</string>
+	<string>$(CLIENT_ID)</string>
 	<key>io.flutter.embedded_views_preview</key>
 	<true/>
 	<key>NSAllowsArbitraryLoads</key>
 	<true/>
 
-	<!-- <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>[USAGE PERPOSE]</string>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>[USAGE PERPOSE]</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>[USAGE PERPOSE]</string> -->
+	<string>[USAGE PERPOSE]</string>
 
 	<!-- image picker -->
 	<key>NSPhotoLibraryUsageDescription</key>

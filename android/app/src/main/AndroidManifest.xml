@@ -29,12 +29,12 @@
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
         <meta-data
             android:name="flutterEmbedding"
-            android:value="2" />
+            android:value="2" />"
 
         <!-- naver map plugin -->
         <meta-data
             android:name="com.naver.maps.map.CLIENT_ID"
-            android:value="YOUR_CLIENT_ID_HERE" />
+            android:value="${naver_map_client_id}" />
 
     </application>
 

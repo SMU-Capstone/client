@@ -52,3 +52,9 @@ app.*.map.json
 !pages/.gitkeep
 !utils/.gitkeep
 !widgets/.gitkeep
+
+# env
+*.env
+
+# for ios
+**/Secret.xcconfig

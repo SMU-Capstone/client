@@ -25,6 +25,10 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
+def Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+def naver_map_client_id = localProperties.getProperty('naver_map_client_id')
+
 android {
     compileSdkVersion flutter.compileSdkVersion
 
@@ -48,6 +52,11 @@ android {
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
+
+        //Manifest에서 사용하기
+        manifestPlaceholders += [
+            naver_map_client_id: naver_map_client_id,
+        ]
     }
 
     buildTypes {

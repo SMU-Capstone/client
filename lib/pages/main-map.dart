@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'package:client/utils/geolocator-service.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:naver_map_plugin/naver_map_plugin.dart';
 
 class MainPage extends StatefulWidget {
@@ -10,6 +12,7 @@ class MainPage extends StatefulWidget {
 
 //Main page 시작
 class _StartMainPage extends State<MainPage> {
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,14 +53,36 @@ class NaverMapBody extends StatelessWidget {
 
   Completer<NaverMapController> _controller = Completer();
   MapType _mapType = MapType.Basic;
+  final Future<Position> position = GeolocatorService().getCurrentPosition();
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: NaverMap(
-          onMapCreated: _onMapCreated,
-          mapType: _mapType,
-      )
+    return FutureBuilder(
+      future: position,
+      builder: (context, snapshot) {
+        //에러 발생시 화면
+        if(snapshot.hasError) {
+          return Text('Error');
+        }
+
+        //data를 받아오기 전 화면
+        if(snapshot.hasData == false) {
+          return Text('아직 못받아옴');
+        }
+
+        //정상 실행시 화면
+        Position position = snapshot.data as Position;
+        return Container(
+            child: NaverMap(
+              onMapCreated: _onMapCreated,
+              mapType: _mapType,
+              initialCameraPosition: CameraPosition(
+                target: LatLng(position.latitude, position.longitude),
+              ),
+            ),
+          );
+      }
+      
     );
   }
 

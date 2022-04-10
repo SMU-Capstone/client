@@ -37,6 +37,7 @@ class MainBottomNavBar extends StatelessWidget {
         child: IconButton(
           onPressed: () {
             //카메라 버튼이 눌렸을 경우 실행되는 함수
+            
           },
           icon: Icon(Icons.camera),
           iconSize: 60,
@@ -73,16 +74,16 @@ class NaverMapBody extends StatelessWidget {
         //정상 실행시 화면
         Position position = snapshot.data as Position;
         return Container(
-            child: NaverMap(
-              onMapCreated: _onMapCreated,
-              mapType: _mapType,
-              initialCameraPosition: CameraPosition(
-                target: LatLng(position.latitude, position.longitude),
-              ),
+          child: NaverMap(
+            onMapCreated: _onMapCreated,
+            mapType: _mapType,
+            initialCameraPosition: CameraPosition(
+              target: LatLng(position.latitude, position.longitude),
             ),
-          );
+            locationButtonEnable: true,
+          ),
+        );
       }
-      
     );
   }
 

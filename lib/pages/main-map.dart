@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:client/utils/geolocator-service.dart';
+import 'package:client/widgets/main-drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:naver_map_plugin/naver_map_plugin.dart';
@@ -16,6 +17,7 @@ class _StartMainPage extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: MainDrawer(),
       appBar: AppBar(title: Text('가로쓰레기통 알리미')),
       body: NaverMapBody(),
       bottomNavigationBar: MainBottomNavBar(),

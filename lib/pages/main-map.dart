@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:client/utils/geolocator-service.dart';
-import 'package:client/widgets/main-drawer.dart';
+import 'package:client/pages/main-drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:naver_map_plugin/naver_map_plugin.dart';
@@ -76,21 +76,52 @@ class NaverMapBody extends StatelessWidget {
         //정상 실행시 화면
         Position position = snapshot.data as Position;
         return Container(
-          child: NaverMap(
-            onMapCreated: _onMapCreated,
-            mapType: _mapType,
-            initialCameraPosition: CameraPosition(
-              target: LatLng(position.latitude, position.longitude),
-            ),
-            locationButtonEnable: true,
+          child: Stack(
+            children: [
+              NaverMap(
+                onMapCreated: _onMapCreated,
+                mapType: _mapType,
+                initialCameraPosition: CameraPosition(
+                  target: LatLng(position.latitude, position.longitude),
+                ),
+                locationButtonEnable: true,
+              ),
+              Align(
+                alignment: Alignment.bottomRight,
+                child: RefreshBtn(controller: _controller,)
+              ),
+            ],
           ),
         );
-      }
+      },
     );
   }
 
   void _onMapCreated(NaverMapController controller) {
     if (_controller.isCompleted) _controller = Completer();
     _controller.complete(controller);
+  }
+
+}
+
+//새로고침으로 근처 쓰레기통 마커를 가져오는 버튼
+class RefreshBtn extends StatelessWidget {
+  const RefreshBtn({ Key? key, required Completer<NaverMapController> controller }) : 
+    this._controller = controller,
+    super(key: key);
+
+  final Completer<NaverMapController> _controller;
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+      //현재 카메라의 중심좌표 반환
+      onPressed: () async{
+        final controller = await _controller.future;
+        final a = await controller.getCameraPosition();
+        print(a);
+      }, 
+      icon: Icon(Icons.autorenew, size: 30,),
+    );
   }
 }

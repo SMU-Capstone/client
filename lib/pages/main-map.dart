@@ -90,6 +90,10 @@ class NaverMapBody extends StatelessWidget {
                 alignment: Alignment.bottomRight,
                 child: RefreshBtn(controller: _controller,)
               ),
+              Align(
+                alignment: Alignment.topCenter,
+                child: TrashClassification(),
+              )
             ],
           ),
         );
@@ -122,6 +126,29 @@ class RefreshBtn extends StatelessWidget {
         print(a);
       }, 
       icon: Icon(Icons.autorenew, size: 30,),
+    );
+  }
+}
+
+
+class TrashClassification extends StatelessWidget {
+
+  String dropdownValue = '모든 쓰레기통';
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 150,
+      height: 40,
+      decoration: BoxDecoration(
+        color: Colors.grey.shade50,
+        border: Border.all(
+          color: Colors.black,
+          width: 0.3,
+        ),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
     );
   }
 }

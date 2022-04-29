@@ -105,7 +105,6 @@ class NaverMapBody extends StatelessWidget {
     if (_controller.isCompleted) _controller = Completer();
     _controller.complete(controller);
   }
-
 }
 
 //새로고침으로 근처 쓰레기통 마커를 가져오는 버튼

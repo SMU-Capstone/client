@@ -129,10 +129,18 @@ class RefreshBtn extends StatelessWidget {
   }
 }
 
+class TrashClassification extends StatefulWidget {
+  const TrashClassification({ Key? key }) : super(key: key);
 
-class TrashClassification extends StatelessWidget {
+  @override
+  _TrashClassificationState createState() => _TrashClassificationState();
+}
 
-  String dropdownValue = '모든 쓰레기통';
+
+class _TrashClassificationState extends State {
+
+  String? dropdownValue = '모든 쓰레기통';
+  final List<String> _valueList = ['모든 쓰레기통', '재활용 쓰레기통'];
 
   @override
   Widget build(BuildContext context) {
@@ -148,6 +156,31 @@ class TrashClassification extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
       ),
       margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
+
+      child: DropdownButton<String>(
+        isExpanded: true,
+        alignment: Alignment.centerRight,
+        borderRadius: BorderRadius.circular(20),
+        value: dropdownValue,
+        icon: Icon(Icons.arrow_drop_down),
+        iconSize: 0,
+        elevation: 16,
+        underline: Container(
+          color: Colors.transparent,
+        ),
+        style: TextStyle(color: Colors.black, fontSize: 18, ),
+        onChanged: (String? data) {
+          setState(() {
+            dropdownValue = data;
+          });
+        },
+        items: _valueList.map((String value) {
+          return DropdownMenuItem(
+            value: value,
+            child: Center(child: Text(value, textAlign: TextAlign.center,)),
+          );
+        }).toList(),
+      ),
     );
   }
 }

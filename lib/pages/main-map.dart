@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:client/utils/geolocator-service.dart';
 import 'package:client/pages/main-drawer.dart';
+import 'package:client/widgets/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:naver_map_plugin/naver_map_plugin.dart';
@@ -36,15 +37,7 @@ class MainBottomNavBar extends StatelessWidget {
         alignment: Alignment.center,
         height: 70,
         color: Colors.lightBlue,
-        child: IconButton(
-          onPressed: () {
-            //카메라 버튼이 눌렸을 경우 실행되는 함수
-            
-          },
-          icon: Icon(Icons.camera),
-          iconSize: 60,
-          
-        ),
+        child: UseCamera(),
       ),
     );
   }
@@ -129,6 +122,7 @@ class RefreshBtn extends StatelessWidget {
   }
 }
 
+//드롭다운버튼
 class TrashClassification extends StatefulWidget {
   const TrashClassification({ Key? key }) : super(key: key);
 
@@ -136,7 +130,7 @@ class TrashClassification extends StatefulWidget {
   _TrashClassificationState createState() => _TrashClassificationState();
 }
 
-
+//드롭다운 버튼의 create상태
 class _TrashClassificationState extends State {
 
   String? dropdownValue = '모든 쓰레기통';
@@ -184,3 +178,4 @@ class _TrashClassificationState extends State {
     );
   }
 }
+

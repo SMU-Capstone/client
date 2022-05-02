@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:client/pages/trash-add.dart';
+import 'package:get/get.dart';
 
 class MainDrawer extends StatelessWidget {
   const MainDrawer({ Key? key }) : super(key: key);
@@ -71,9 +73,18 @@ class MenuPart extends StatelessWidget {
       child: Container(
         child: ListView(
           children: [
-            ListTile(title: Text("쓰레기통 추가신청"),),
-            ListTile(title: Text("쓰레기통 철거신청"),),
-            ListTile(title: Text("쓰레기통 청소신청"),),
+            ListTile(
+              onTap: () {
+                Get.to(() => const TrashAddPage());  // 쓰레기통 추가신청 페이지로 이동
+              },
+              title: Text("쓰레기통 추가신청"),
+            ),
+            ListTile(
+              title: Text("쓰레기통 철거신청"),
+            ),
+            ListTile(
+              title: Text("쓰레기통 청소신청"),
+            ),
           ],
         ),
       ),

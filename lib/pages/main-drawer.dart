@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:client/pages/trash-add.dart';
 import 'package:get/get.dart';
+import 'package:client/widgets/trash-manage.dart';
 
 class MainDrawer extends StatelessWidget {
-  const MainDrawer({ Key? key }) : super(key: key);
+  const MainDrawer({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +24,7 @@ class MainDrawer extends StatelessWidget {
 
 //drawer의 윗부분
 class InfoPart extends StatelessWidget {
-  const InfoPart({ Key? key }) : super(key: key);
+  const InfoPart({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +50,8 @@ class InfoPart extends StatelessWidget {
           Flexible(
             flex: 3,
             child: Container(
-              child: Text('가로쓰레기통 알리미',
+              child: Text(
+                '가로쓰레기통 알리미',
                 style: TextStyle(
                   fontSize: 25,
                 ),
@@ -63,32 +64,13 @@ class InfoPart extends StatelessWidget {
   }
 }
 
-//drawer의 아랫부분
+//drawer의 아랫부분 쓰레기통 관리 위젯 호출
 class MenuPart extends StatelessWidget {
-  const MenuPart({ Key? key }) : super(key: key);
+  const MenuPart({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: Container(
-        child: ListView(
-          children: [
-            ListTile(
-              onTap: () {
-                Get.to(() => const TrashAddPage());  // 쓰레기통 추가신청 페이지로 이동
-              },
-              title: Text("쓰레기통 추가신청"),
-            ),
-            ListTile(
-              title: Text("쓰레기통 철거신청"),
-            ),
-            ListTile(
-              title: Text("쓰레기통 청소신청"),
-            ),
-          ],
-        ),
-      ),
-    );
+    return TrashManageWidget();
   }
 }
 

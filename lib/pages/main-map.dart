@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:client/utils/geolocator-service.dart';
 import 'package:client/pages/main-drawer.dart';
+import 'package:client/utils/main-service.dart';
 import 'package:client/widgets/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -114,8 +115,14 @@ class RefreshBtn extends StatelessWidget {
       //현재 카메라의 중심좌표 반환
       onPressed: () async{
         final controller = await _controller.future;
-        final a = await controller.getCameraPosition();
-        print(a);
+        final xy = await controller.getCameraPosition();
+        final double latitude = xy.target.latitude;
+        final double longitude = xy.target.longitude;
+        print('lat: ${latitude}');
+        print('long: ${longitude}');
+        //임시로 좌표를 뽑기위해 매직넘버 사용
+        final data = await coordinates(37.576004, 126.973261);
+        print(data);
       }, 
       icon: Icon(Icons.autorenew, size: 30,),
     );

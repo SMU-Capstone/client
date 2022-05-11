@@ -84,6 +84,24 @@ class NaverMapBody extends State {
   MapType _mapType = MapType.Basic;
   final Future<Position> position = GeolocatorService().getCurrentPosition();
 
+  //앱시작시, 사용자 위치 근처 마커들을 표시
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance?.addPostFrameCallback((_) {
+      _initGetCoordinate();
+    });
+  }
+
+  //앱시작시, 사용자 위치 근처 마커들을 표시하는 함수. initState에 들어간다.
+  _initGetCoordinate() async {
+    Position position = await GeolocatorService().getCurrentPosition();
+    final latitude = position.latitude;
+    final longitude = position.longitude;
+
+    final data = await coordinates(latitude, longitude);
+    setMarker(data);
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
@@ -105,6 +123,7 @@ class NaverMapBody extends State {
           child: Stack(
             children: [
               NaverMap(
+                
                 onMapCreated: _onMapCreated,
                 mapType: _mapType,
                 initialCameraPosition: CameraPosition(
@@ -142,21 +161,23 @@ class RefreshBtn extends StatelessWidget {
 
   final Completer<NaverMapController> _controller;
 
+  refresh() async {
+    final controller = await _controller.future;
+        final xy = await controller.getCameraPosition();
+        final double latitude = xy.target.latitude;
+        final double longitude = xy.target.longitude;
+        //카메라 주변 쓰레기통 좌표들을 가져온다.
+        final data = await coordinates(latitude, longitude);
+
+        naverMapBody.setMarker(data);
+  }
+
   @override
   Widget build(BuildContext context) {
     return IconButton(
       //현재 카메라의 중심좌표 반환
-      onPressed: () async{
-        final controller = await _controller.future;
-        final xy = await controller.getCameraPosition();
-        final double latitude = xy.target.latitude;
-        final double longitude = xy.target.longitude;
-        print('lat: ${latitude}');
-        print('long: ${longitude}');
-        //임시로 좌표를 뽑기위해 매직넘버 사용
-        final data = await coordinates(latitude, longitude);
-        print(data);
-        naverMapBody.setMarker(data);
+      onPressed: () async {
+        await refresh();
       }, 
       icon: Icon(Icons.autorenew, size: 30,),
     );

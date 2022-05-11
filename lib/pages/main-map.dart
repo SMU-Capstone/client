@@ -7,10 +7,11 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:naver_map_plugin/naver_map_plugin.dart';
 
+NaverMapBody naverMapBody = NaverMapBody();
+
 class MainPage extends StatefulWidget {
   @override
   _StartMainPage createState() => _StartMainPage();
-  
 }
 
 //Main page 시작
@@ -21,7 +22,7 @@ class _StartMainPage extends State<MainPage> {
     return Scaffold(
       drawer: MainDrawer(),
       appBar: AppBar(title: Text('가로쓰레기통 알리미')),
-      body: NaverMapBody(),
+      body: NaverMapWidget(),
       bottomNavigationBar: MainBottomNavBar(),
     );
   }
@@ -44,9 +45,40 @@ class MainBottomNavBar extends StatelessWidget {
   }
 }
 
+class NaverMapWidget extends StatefulWidget {
+  const NaverMapWidget({ Key? key }) : super(key: key);
+
+  @override
+  NaverMapBody createState() => naverMapBody;
+}
+
+class _NaverMapWidgetState extends State<NaverMapWidget> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      
+    );
+  }
+}
+
 //Naver map
-class NaverMapBody extends StatelessWidget {
-  NaverMapBody({ Key? key }) : super(key: key);
+class NaverMapBody extends State {
+
+  List<Marker> _markers = [];
+
+  setMarker(List coordinates) {
+    setState(() {
+      _markers.clear();
+      for(final coordinate in coordinates) {
+        _markers.add(Marker(
+          markerId: coordinate['id'].toString(), 
+          position: LatLng(
+            double.parse(coordinate['latitude']), double.parse(coordinate['longitude']))
+          ),
+        );
+      }
+    });
+  }
 
   Completer<NaverMapController> _controller = Completer();
   MapType _mapType = MapType.Basic;
@@ -79,6 +111,7 @@ class NaverMapBody extends StatelessWidget {
                   target: LatLng(position.latitude, position.longitude),
                 ),
                 locationButtonEnable: true,
+                markers: _markers.toList(),
               ),
               Align(
                 alignment: Alignment.bottomRight,
@@ -121,8 +154,9 @@ class RefreshBtn extends StatelessWidget {
         print('lat: ${latitude}');
         print('long: ${longitude}');
         //임시로 좌표를 뽑기위해 매직넘버 사용
-        final data = await coordinates(37.576004, 126.973261);
+        final data = await coordinates(latitude, longitude);
         print(data);
+        naverMapBody.setMarker(data);
       }, 
       icon: Icon(Icons.autorenew, size: 30,),
     );

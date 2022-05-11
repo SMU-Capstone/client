@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 
 //지도에 좌표를 가져오는 함수
-Future<String> coordinates(double latitude, double longitude) async {
+Future coordinates(double latitude, double longitude) async {
 
   BaseOptions options = BaseOptions(
     baseUrl: 'http://127.0.0.1:3000',
@@ -22,5 +22,5 @@ Future<String> coordinates(double latitude, double longitude) async {
     print(e);
   }
 
-  return response!.data.toString();
+  return response!.data;
 }

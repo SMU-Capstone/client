@@ -1,15 +1,17 @@
 import 'dart:async';
 import 'package:client/utils/geolocator-service.dart';
 import 'package:client/pages/main-drawer.dart';
+import 'package:client/utils/main-service.dart';
 import 'package:client/widgets/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:naver_map_plugin/naver_map_plugin.dart';
 
+NaverMapBody naverMapBody = NaverMapBody();
+
 class MainPage extends StatefulWidget {
   @override
   _StartMainPage createState() => _StartMainPage();
-  
 }
 
 //Main page 시작
@@ -20,7 +22,7 @@ class _StartMainPage extends State<MainPage> {
     return Scaffold(
       drawer: MainDrawer(),
       appBar: AppBar(title: Text('가로쓰레기통 알리미')),
-      body: NaverMapBody(),
+      body: NaverMapWidget(),
       bottomNavigationBar: MainBottomNavBar(),
     );
   }
@@ -43,13 +45,62 @@ class MainBottomNavBar extends StatelessWidget {
   }
 }
 
+class NaverMapWidget extends StatefulWidget {
+  const NaverMapWidget({ Key? key }) : super(key: key);
+
+  @override
+  NaverMapBody createState() => naverMapBody;
+}
+
+class _NaverMapWidgetState extends State<NaverMapWidget> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      
+    );
+  }
+}
+
 //Naver map
-class NaverMapBody extends StatelessWidget {
-  NaverMapBody({ Key? key }) : super(key: key);
+class NaverMapBody extends State {
+
+  List<Marker> _markers = [];
+
+  setMarker(List coordinates) {
+    setState(() {
+      _markers.clear();
+      for(final coordinate in coordinates) {
+        _markers.add(Marker(
+          markerId: coordinate['id'].toString(), 
+          position: LatLng(
+            double.parse(coordinate['latitude']), double.parse(coordinate['longitude']))
+          ),
+        );
+      }
+    });
+  }
 
   Completer<NaverMapController> _controller = Completer();
   MapType _mapType = MapType.Basic;
   final Future<Position> position = GeolocatorService().getCurrentPosition();
+
+  //앱시작시, 사용자 위치 근처 마커들을 표시
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance?.addPostFrameCallback((_) {
+      _initGetCoordinate();
+    });
+  }
+
+  //앱시작시, 사용자 위치 근처 마커들을 표시하는 함수. initState에 들어간다.
+  _initGetCoordinate() async {
+    Position position = await GeolocatorService().getCurrentPosition();
+    final latitude = position.latitude;
+    final longitude = position.longitude;
+
+    final data = await coordinates(latitude, longitude);
+    setMarker(data);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -72,12 +123,14 @@ class NaverMapBody extends StatelessWidget {
           child: Stack(
             children: [
               NaverMap(
+                
                 onMapCreated: _onMapCreated,
                 mapType: _mapType,
                 initialCameraPosition: CameraPosition(
                   target: LatLng(position.latitude, position.longitude),
                 ),
                 locationButtonEnable: true,
+                markers: _markers.toList(),
               ),
               Align(
                 alignment: Alignment.bottomRight,
@@ -108,14 +161,23 @@ class RefreshBtn extends StatelessWidget {
 
   final Completer<NaverMapController> _controller;
 
+  refresh() async {
+    final controller = await _controller.future;
+        final xy = await controller.getCameraPosition();
+        final double latitude = xy.target.latitude;
+        final double longitude = xy.target.longitude;
+        //카메라 주변 쓰레기통 좌표들을 가져온다.
+        final data = await coordinates(latitude, longitude);
+
+        naverMapBody.setMarker(data);
+  }
+
   @override
   Widget build(BuildContext context) {
     return IconButton(
       //현재 카메라의 중심좌표 반환
-      onPressed: () async{
-        final controller = await _controller.future;
-        final a = await controller.getCameraPosition();
-        print(a);
+      onPressed: () async {
+        await refresh();
       }, 
       icon: Icon(Icons.autorenew, size: 30,),
     );

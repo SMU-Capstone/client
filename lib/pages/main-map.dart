@@ -65,6 +65,9 @@ class _NaverMapWidgetState extends State<NaverMapWidget> {
 class NaverMapBody extends State {
 
   List<Marker> _markers = [];
+  Completer<NaverMapController> _controller = Completer();
+  MapType _mapType = MapType.Basic;
+  Position? position;
 
   setMarker(List coordinates) {
     setState(() {
@@ -73,16 +76,12 @@ class NaverMapBody extends State {
         _markers.add(Marker(
           markerId: coordinate['id'].toString(), 
           position: LatLng(
-            double.parse(coordinate['latitude']), double.parse(coordinate['longitude']))
+            double.parse(coordinate['latitude']), double.parse(coordinate['longitude'])),
           ),
         );
       }
     });
   }
-
-  Completer<NaverMapController> _controller = Completer();
-  MapType _mapType = MapType.Basic;
-  final Future<Position> position = GeolocatorService().getCurrentPosition();
 
   //앱시작시, 사용자 위치 근처 마커들을 표시
   void initState() {
@@ -94,9 +93,9 @@ class NaverMapBody extends State {
 
   //앱시작시, 사용자 위치 근처 마커들을 표시하는 함수. initState에 들어간다.
   _initGetCoordinate() async {
-    Position position = await GeolocatorService().getCurrentPosition();
-    final latitude = position.latitude;
-    final longitude = position.longitude;
+    position = await GeolocatorService().getCurrentPosition();
+    final latitude = position!.latitude;
+    final longitude = position!.longitude;
 
     final data = await coordinates(latitude, longitude);
     setMarker(data);
@@ -104,46 +103,32 @@ class NaverMapBody extends State {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: position,
-      builder: (context, snapshot) {
-        //에러 발생시 화면
-        if(snapshot.hasError) {
-          return Text('Error');
-        }
+    if(position == null) {
+      return Text('로딩중');
+    }
 
-        //data를 받아오기 전 화면
-        if(snapshot.hasData == false) {
-          return Text('아직 못받아옴');
-        }
-
-        //정상 실행시 화면
-        Position position = snapshot.data as Position;
-        return Container(
-          child: Stack(
-            children: [
-              NaverMap(
-                
-                onMapCreated: _onMapCreated,
-                mapType: _mapType,
-                initialCameraPosition: CameraPosition(
-                  target: LatLng(position.latitude, position.longitude),
-                ),
-                locationButtonEnable: true,
-                markers: _markers.toList(),
-              ),
-              Align(
-                alignment: Alignment.bottomRight,
-                child: RefreshBtn(controller: _controller,)
-              ),
-              Align(
-                alignment: Alignment.topCenter,
-                child: TrashClassification(),
-              )
-            ],
+    return Container(
+      child: Stack(
+        children: [
+          NaverMap(
+            onMapCreated: _onMapCreated,
+            mapType: _mapType,
+            initialCameraPosition: CameraPosition(
+              target: LatLng(position!.latitude, position!.longitude),
+            ),
+            locationButtonEnable: true,
+            markers: _markers.toList(),
           ),
-        );
-      },
+          Align(
+            alignment: Alignment.bottomRight,
+            child: RefreshBtn(controller: _controller,)
+          ),
+          Align(
+            alignment: Alignment.topCenter,
+            child: TrashClassification(),
+          )
+        ],
+      ),
     );
   }
 

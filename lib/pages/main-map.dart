@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:client/pages/loading.dart';
 import 'package:client/utils/geolocator-service.dart';
 import 'package:client/pages/main-drawer.dart';
 import 'package:client/utils/main-service.dart';
@@ -19,6 +20,7 @@ class _StartMainPage extends State<MainPage> {
   
   @override
   Widget build(BuildContext context) {
+    
     return Scaffold(
       drawer: MainDrawer(),
       appBar: AppBar(title: Text('가로쓰레기통 알리미')),
@@ -50,15 +52,7 @@ class NaverMapWidget extends StatefulWidget {
 
   @override
   NaverMapBody createState() => naverMapBody;
-}
 
-class _NaverMapWidgetState extends State<NaverMapWidget> {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      
-    );
-  }
 }
 
 //Naver map
@@ -104,7 +98,7 @@ class NaverMapBody extends State {
   @override
   Widget build(BuildContext context) {
     if(position == null) {
-      return Text('로딩중');
+      return LoadingScreen();
     }
 
     return Container(

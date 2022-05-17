@@ -71,6 +71,8 @@ class NaverMapBody extends State {
           markerId: coordinate['id'].toString(), 
           position: LatLng(
             double.parse(coordinate['latitude']), double.parse(coordinate['longitude'])),
+          width: 20,
+          height: 30,
           ),
         );
       }

@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 
 //지도에 좌표를 가져오는 함수
-Future coordinates(double latitude, double longitude) async {
+Future coordinates(double latitude, double longitude, int? type) async {
 
   BaseOptions options = BaseOptions(
     baseUrl: 'http://127.0.0.1:3000',
@@ -16,7 +16,7 @@ Future coordinates(double latitude, double longitude) async {
   try {
     response = await dio.get(
       '/trashcan/range',
-      queryParameters: {'lat': latitude, 'lon': longitude,}, 
+      queryParameters: {'lat': latitude, 'lon': longitude, 'type': type}, 
     );
   } on Exception catch (e) {
     print(e);

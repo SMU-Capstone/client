@@ -62,6 +62,7 @@ class NaverMapBody extends State {
   Completer<NaverMapController> _controller = Completer();
   MapType _mapType = MapType.Basic;
   Position? position;
+  int? type = null;
 
   setMarker(List coordinates) {
     setState(() {
@@ -93,7 +94,7 @@ class NaverMapBody extends State {
     final latitude = position!.latitude;
     final longitude = position!.longitude;
 
-    final data = await coordinates(latitude, longitude);
+    final data = await coordinates(latitude, longitude, type);
     setMarker(data);
   }
 
@@ -148,7 +149,7 @@ class RefreshBtn extends StatelessWidget {
         final double latitude = xy.target.latitude;
         final double longitude = xy.target.longitude;
         //카메라 주변 쓰레기통 좌표들을 가져온다.
-        final data = await coordinates(latitude, longitude);
+        final data = await coordinates(latitude, longitude, naverMapBody.type);
 
         naverMapBody.setMarker(data);
   }
@@ -177,7 +178,7 @@ class TrashClassification extends StatefulWidget {
 class _TrashClassificationState extends State {
 
   String? dropdownValue = '모든 쓰레기통';
-  final List<String> _valueList = ['모든 쓰레기통', '재활용 쓰레기통'];
+  final List<String> _valueList = ['모든 쓰레기통', '일반 쓰레기통', '재활용 쓰레기통'];
 
   @override
   Widget build(BuildContext context) {
@@ -209,6 +210,17 @@ class _TrashClassificationState extends State {
         onChanged: (String? data) {
           setState(() {
             dropdownValue = data;
+            switch(data) {
+              case '일반 쓰레기통':
+                naverMapBody.type = 1;
+                break;
+              case '재활용 쓰레기통':
+                naverMapBody.type = 2;
+                break;
+              default:
+                naverMapBody.type = null;
+                break;
+            }
           });
         },
         items: _valueList.map((String value) {

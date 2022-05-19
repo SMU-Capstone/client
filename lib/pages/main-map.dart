@@ -17,10 +17,8 @@ class MainPage extends StatefulWidget {
 
 //Main page 시작
 class _StartMainPage extends State<MainPage> {
-  
   @override
   Widget build(BuildContext context) {
-    
     return Scaffold(
       drawer: MainDrawer(),
       appBar: AppBar(title: Text('가로쓰레기통 알리미')),
@@ -32,7 +30,7 @@ class _StartMainPage extends State<MainPage> {
 
 //Bottom Navigation Bar
 class MainBottomNavBar extends StatelessWidget {
-  const MainBottomNavBar({ Key? key }) : super(key: key);
+  const MainBottomNavBar({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -48,16 +46,14 @@ class MainBottomNavBar extends StatelessWidget {
 }
 
 class NaverMapWidget extends StatefulWidget {
-  const NaverMapWidget({ Key? key }) : super(key: key);
+  const NaverMapWidget({Key? key}) : super(key: key);
 
   @override
   NaverMapBody createState() => naverMapBody;
-
 }
 
 //Naver map
 class NaverMapBody extends State {
-
   List<Marker> _markers = [];
   Completer<NaverMapController> _controller = Completer();
   MapType _mapType = MapType.Basic;
@@ -66,17 +62,32 @@ class NaverMapBody extends State {
   setMarker(List coordinates) {
     setState(() {
       _markers.clear();
-      for(final coordinate in coordinates) {
-        _markers.add(Marker(
-          markerId: coordinate['id'].toString(), 
-          position: LatLng(
-            double.parse(coordinate['latitude']), double.parse(coordinate['longitude'])),
-          width: 20,
-          height: 30,
+      for (final coordinate in coordinates) {
+        _markers.add(
+          Marker(
+            markerId: coordinate['id'].toString(),
+            position: LatLng(double.parse(coordinate['latitude']),
+                double.parse(coordinate['longitude'])),
+            width: 20,
+            height: 30,
+            infoWindow: coordinate['address'].toString() +
+                '\n' +
+                toStringType(coordinate['type']),
           ),
         );
       }
     });
+  }
+
+  //쓰레기통 타입을 int 에서 문자열으로 변경해주는 함수
+  String toStringType(int type) {
+    if (type == 1) {
+      return '일반 쓰레기통';
+    } else if (type == 2) {
+      return '재활용 쓰레기통';
+    } else {
+      return '쓰레기통';
+    }
   }
 
   //앱시작시, 사용자 위치 근처 마커들을 표시
@@ -99,7 +110,7 @@ class NaverMapBody extends State {
 
   @override
   Widget build(BuildContext context) {
-    if(position == null) {
+    if (position == null) {
       return LoadingScreen();
     }
 
@@ -116,9 +127,10 @@ class NaverMapBody extends State {
             markers: _markers.toList(),
           ),
           Align(
-            alignment: Alignment.bottomRight,
-            child: RefreshBtn(controller: _controller,)
-          ),
+              alignment: Alignment.bottomRight,
+              child: RefreshBtn(
+                controller: _controller,
+              )),
           Align(
             alignment: Alignment.topCenter,
             child: TrashClassification(),
@@ -136,21 +148,22 @@ class NaverMapBody extends State {
 
 //새로고침으로 근처 쓰레기통 마커를 가져오는 버튼
 class RefreshBtn extends StatelessWidget {
-  const RefreshBtn({ Key? key, required Completer<NaverMapController> controller }) : 
-    this._controller = controller,
-    super(key: key);
+  const RefreshBtn(
+      {Key? key, required Completer<NaverMapController> controller})
+      : this._controller = controller,
+        super(key: key);
 
   final Completer<NaverMapController> _controller;
 
   refresh() async {
     final controller = await _controller.future;
-        final xy = await controller.getCameraPosition();
-        final double latitude = xy.target.latitude;
-        final double longitude = xy.target.longitude;
-        //카메라 주변 쓰레기통 좌표들을 가져온다.
-        final data = await coordinates(latitude, longitude);
+    final xy = await controller.getCameraPosition();
+    final double latitude = xy.target.latitude;
+    final double longitude = xy.target.longitude;
+    //카메라 주변 쓰레기통 좌표들을 가져온다.
+    final data = await coordinates(latitude, longitude);
 
-        naverMapBody.setMarker(data);
+    naverMapBody.setMarker(data);
   }
 
   @override
@@ -159,15 +172,18 @@ class RefreshBtn extends StatelessWidget {
       //현재 카메라의 중심좌표 반환
       onPressed: () async {
         await refresh();
-      }, 
-      icon: Icon(Icons.autorenew, size: 30,),
+      },
+      icon: Icon(
+        Icons.autorenew,
+        size: 30,
+      ),
     );
   }
 }
 
 //드롭다운버튼
 class TrashClassification extends StatefulWidget {
-  const TrashClassification({ Key? key }) : super(key: key);
+  const TrashClassification({Key? key}) : super(key: key);
 
   @override
   _TrashClassificationState createState() => _TrashClassificationState();
@@ -175,7 +191,6 @@ class TrashClassification extends StatefulWidget {
 
 //드롭다운 버튼의 create상태
 class _TrashClassificationState extends State {
-
   String? dropdownValue = '모든 쓰레기통';
   final List<String> _valueList = ['모든 쓰레기통', '재활용 쓰레기통'];
 
@@ -193,7 +208,6 @@ class _TrashClassificationState extends State {
         borderRadius: BorderRadius.circular(20),
       ),
       margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
-
       child: DropdownButton<String>(
         isExpanded: true,
         alignment: Alignment.centerRight,
@@ -205,7 +219,10 @@ class _TrashClassificationState extends State {
         underline: Container(
           color: Colors.transparent,
         ),
-        style: TextStyle(color: Colors.black, fontSize: 18, ),
+        style: TextStyle(
+          color: Colors.black,
+          fontSize: 18,
+        ),
         onChanged: (String? data) {
           setState(() {
             dropdownValue = data;
@@ -214,11 +231,14 @@ class _TrashClassificationState extends State {
         items: _valueList.map((String value) {
           return DropdownMenuItem(
             value: value,
-            child: Center(child: Text(value, textAlign: TextAlign.center,)),
+            child: Center(
+                child: Text(
+              value,
+              textAlign: TextAlign.center,
+            )),
           );
         }).toList(),
       ),
     );
   }
 }
-

@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart' as g;
 import 'package:image_picker/image_picker.dart';
 
@@ -38,7 +39,7 @@ class _UseCameraState extends State<UseCamera> {
 
       // dio.options.headers["authorization"] = AuthProvider.token;
       dio.options.contentType = "multipart/form-data";
-      final res = await dio.post("https://10.0.0.2/trash/images", data: _formData )
+      final res = await dio.post("${dotenv.get('FLASK_BASE_URL')}/predict", data: _formData )
         .then((res) {
           g.Get.back();
           return res.data;

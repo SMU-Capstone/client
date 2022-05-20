@@ -1,10 +1,11 @@
 import 'package:dio/dio.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 //지도에 좌표를 가져오는 함수
 Future coordinates(double latitude, double longitude, int? type) async {
 
   BaseOptions options = BaseOptions(
-    baseUrl: 'http://127.0.0.1:3000',
+    baseUrl: '${dotenv.get('NEST_BASE_URL')}',
     connectTimeout: 5000,
     receiveTimeout: 3000,
   );

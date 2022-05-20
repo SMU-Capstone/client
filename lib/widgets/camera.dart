@@ -54,6 +54,13 @@ class _UseCameraState extends State<UseCamera> {
         final data = await getImage(ImageSource.camera);
         final label = data['predicted_label'];
         print(label);
+        showDialog(
+          context: context, 
+          builder: (BuildContext context) => AlertDialog(
+            title: Text("쓰레기통 분류"),
+            content: Text("분류 : ${label}"),
+          ),
+        );
       },
       icon: Icon(Icons.camera),
       iconSize: 60,

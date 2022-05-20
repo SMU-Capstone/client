@@ -31,7 +31,7 @@ class _UseCameraState extends State<UseCamera> {
       }
 
       if(_image != null) {
-        _formData = FormData.fromMap({"image": MultipartFile.fromFileSync(_image!.path)});
+        _formData = FormData.fromMap({"file": MultipartFile.fromFileSync(_image!.path)});
       }
 
       //NOTE: 이 부분은 나중에 서버와의 통신을 위해 사용해야할 부분입니다.
@@ -47,9 +47,9 @@ class _UseCameraState extends State<UseCamera> {
     }
 
     return IconButton(
-      onPressed: () {
+      onPressed: () async {
         //카메라 버튼이 눌렸을 경우 실행되는 함수
-        getImage(ImageSource.camera);
+        final data = getImage(ImageSource.camera);
       },
       icon: Icon(Icons.camera),
       iconSize: 60,

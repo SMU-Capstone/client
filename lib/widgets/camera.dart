@@ -39,17 +39,21 @@ class _UseCameraState extends State<UseCamera> {
 
       // dio.options.headers["authorization"] = AuthProvider.token;
       dio.options.contentType = "multipart/form-data";
-      final res = await dio.post("${dotenv.get('FLASK_BASE_URL')}/predict", data: _formData )
+      final res = await dio.post("${dotenv.get('FLASK_BASE_URL')}/predict/", data: _formData )
         .then((res) {
           g.Get.back();
           return res.data;
         });
+
+      return res;
     }
 
     return IconButton(
       onPressed: () async {
         //카메라 버튼이 눌렸을 경우 실행되는 함수
-        final data = getImage(ImageSource.camera);
+        final data = await getImage(ImageSource.camera);
+        final label = data['predicted_label'];
+        print(label);
       },
       icon: Icon(Icons.camera),
       iconSize: 60,

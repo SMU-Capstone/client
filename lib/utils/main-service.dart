@@ -14,10 +14,19 @@ Future coordinates(double latitude, double longitude, int? type) async {
 
   Response? response;
 
+  Map<String, dynamic> query = {
+    'lat': latitude,
+    'lon': longitude,
+  };
+
+  if (type != null) {
+    query['type'] = type;
+  }
+
   try {
     response = await dio.get(
       '/trashcan/range',
-      queryParameters: {'lat': latitude, 'lon': longitude, 'type': type}, 
+      queryParameters: query, 
     );
   } on Exception catch (e) {
     print(e);

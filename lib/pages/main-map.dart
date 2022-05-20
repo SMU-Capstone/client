@@ -64,6 +64,12 @@ class NaverMapBody extends State {
   Position? position;
   int? type = null;
 
+  //마커에 쓰레기통 정보를 띄우기 위한 변수들
+  String address = '';
+  String trashcanType = '';
+
+  bool isVisible = false;
+
   setMarker(List coordinates) {
     setState(() {
       _markers.clear();
@@ -74,6 +80,12 @@ class NaverMapBody extends State {
             double.parse(coordinate['latitude']), double.parse(coordinate['longitude'])),
           width: 20,
           height: 30,
+          onMarkerTab: (marker, iconSize) {
+            setState(() {
+              address = coordinate['address'];
+              isVisible = true;
+            });
+          },
           ),
         );
       }
@@ -115,6 +127,11 @@ class NaverMapBody extends State {
             ),
             locationButtonEnable: true,
             markers: _markers.toList(),
+            onMapTap: (position) {
+              setState(() {
+                isVisible = false;              
+              });
+            },
           ),
           Align(
             alignment: Alignment.bottomRight,
@@ -123,6 +140,33 @@ class NaverMapBody extends State {
           Align(
             alignment: Alignment.topCenter,
             child: TrashClassification(),
+          ),
+          Positioned(
+            bottom: 10,
+            left: 20,
+            child: Visibility(
+              child: Container(
+                width: 335,
+                height: 150,
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: Colors.green,
+                    width: 5,
+                  ),
+                  borderRadius: BorderRadius.circular(20),
+                  color: Colors.white,
+                ),
+                child: Center(
+                  child: Text(address,
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+              ),
+              visible: isVisible,
+            ),
           )
         ],
       ),

@@ -49,8 +49,8 @@ class _TrashAddWidgetState extends State<TrashAddWidget> {
       onTap: () async {
         Position position;
         position = await GeolocatorService().getCurrentPosition();
-        final latitude = position!.latitude;
-        final longitude = position!.longitude;
+        final latitude = position.latitude;
+        final longitude = position.longitude;
         showDialog(
           context: context,
           builder: (BuildContext context) => AlertDialog(

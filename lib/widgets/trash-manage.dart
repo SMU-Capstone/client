@@ -113,7 +113,24 @@ class _TrashAddWidgetState extends State<TrashAddWidget> {
                       int.parse(selectedAddReason!.split('.')[0]));
                   selectedAddReason = '1. 주변에 쓰레기통이 없어서';
                   selectedAddTrashType = '1. 일반 쓰레기통';
-                  Navigator.of(context).pop();
+
+                  showDialog(
+                    context: context, 
+                    builder: (BuildContext context) => AlertDialog(
+                      title: Text('쓰레기통 추가 신청'),
+                      content: Text('신청이 완료되었습니다.'),
+                      actions: <Widget>[
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text('확인'),
+                      )],
+                    ),
+                  );
+
+                  // Navigator.of(context).pop();
                 },
                 child: Text('신청'),
               ),

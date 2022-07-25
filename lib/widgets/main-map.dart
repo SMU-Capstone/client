@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:client/controllers/dropdown-controller.dart';
 import 'package:client/pages/loading.dart';
 import 'package:client/utils/geolocator-service.dart';
 import 'package:client/pages/main-drawer.dart';
@@ -7,43 +8,9 @@ import 'package:client/widgets/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:naver_map_plugin/naver_map_plugin.dart';
+import 'package:get/get.dart'; // 상태관리용 GetX 패키지
 
 NaverMapBody naverMapBody = NaverMapBody();
-
-class MainPage extends StatefulWidget {
-  @override
-  _StartMainPage createState() => _StartMainPage();
-}
-
-//Main page 시작
-class _StartMainPage extends State<MainPage> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      drawer: MainDrawer(),
-      appBar: AppBar(title: Text('가로쓰레기통 알리미')),
-      body: NaverMapWidget(),
-      bottomNavigationBar: MainBottomNavBar(),
-    );
-  }
-}
-
-//Bottom Navigation Bar
-class MainBottomNavBar extends StatelessWidget {
-  const MainBottomNavBar({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return BottomAppBar(
-      child: Container(
-        alignment: Alignment.center,
-        height: 70,
-        color: Colors.lightBlue,
-        child: UseCamera(),
-      ),
-    );
-  }
-}
 
 class NaverMapWidget extends StatefulWidget {
   const NaverMapWidget({Key? key}) : super(key: key);
@@ -141,7 +108,7 @@ class NaverMapBody extends State {
               )),
           Align(
             alignment: Alignment.topCenter,
-            child: TrashClassification(),
+            child: TrashClassificationDropdownButton(), // 쓰레기통 종류 드랍다운
           ),
           Positioned(
             bottom: 10,
@@ -245,75 +212,69 @@ class RefreshBtn extends StatelessWidget {
   }
 }
 
-//드롭다운버튼
-class TrashClassification extends StatefulWidget {
-  const TrashClassification({Key? key}) : super(key: key);
+// 쓰레기통종류 드랍다운 버튼 with GetX
+class TrashClassificationDropdownButton extends StatelessWidget {
+  TrashClassificationDropdownButton({Key? key}) : super(key: key);
 
-  @override
-  _TrashClassificationState createState() => _TrashClassificationState();
-}
-
-//드롭다운 버튼의 create상태
-class _TrashClassificationState extends State {
-  String? dropdownValue = '모든 쓰레기통';
-  final List<String> _valueList = ['모든 쓰레기통', '일반 쓰레기통', '재활용 쓰레기통'];
+  DropdownController dropdownController =
+      Get.put(DropdownController()); // DropdownController 의존성 주입
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 150,
-      height: 40,
-      decoration: BoxDecoration(
-        color: Colors.grey.shade50,
-        border: Border.all(
-          color: Colors.black,
-          width: 0.3,
+        width: 150,
+        height: 40,
+        decoration: BoxDecoration(
+          color: Colors.grey.shade50,
+          border: Border.all(
+            color: Colors.black,
+            width: 0.3,
+          ),
+          borderRadius: BorderRadius.circular(20),
         ),
-        borderRadius: BorderRadius.circular(20),
-      ),
-      margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
-      child: DropdownButton<String>(
-        isExpanded: true,
-        alignment: Alignment.centerRight,
-        borderRadius: BorderRadius.circular(20),
-        value: dropdownValue,
-        icon: Icon(Icons.arrow_drop_down),
-        iconSize: 0,
-        elevation: 16,
-        underline: Container(
-          color: Colors.transparent,
-        ),
-        style: TextStyle(
-          color: Colors.black,
-          fontSize: 18,
-        ),
-        onChanged: (String? data) {
-          setState(() {
-            dropdownValue = data;
-            switch (data) {
-              case '일반 쓰레기통':
-                naverMapBody.type = 1;
-                break;
-              case '재활용 쓰레기통':
-                naverMapBody.type = 2;
-                break;
-              default:
-                naverMapBody.type = null;
-                break;
-            }
-          });
-        },
-        items: _valueList.map((String value) {
-          return DropdownMenuItem(
-            value: value,
-            child: Center(
-                child: Text(
-              value,
-              textAlign: TextAlign.center,
-            )),
-          );
-        }).toList(),
-      ),
-    );
+        margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
+        // 드랍다운 버튼
+        child: Obx(
+          () => DropdownButton<String>(
+            isExpanded: true,
+            alignment: Alignment.centerRight,
+            borderRadius: BorderRadius.circular(20),
+            value: dropdownController.dropdownValue.value,
+            icon: Icon(Icons.arrow_drop_down),
+            iconSize: 0,
+            elevation: 16,
+            underline: Container(
+              color: Colors.transparent,
+            ),
+            style: TextStyle(
+              color: Colors.black,
+              fontSize: 18,
+            ),
+            onChanged: (String? data) {
+              dropdownController.dropdownValue.value = data!;
+              switch (data) {
+                case '일반 쓰레기통':
+                  naverMapBody.type = 1;
+                  break;
+                case '재활용 쓰레기통':
+                  naverMapBody.type = 2;
+                  break;
+                default:
+                  naverMapBody.type = null;
+                  break;
+              }
+            },
+            items: dropdownController.valueList.map((String value) {
+              return DropdownMenuItem(
+                value: value,
+                child: Center(
+                    child: Text(
+                  value,
+                  textAlign: TextAlign.center,
+                )),
+              );
+            }).toList(),
+          ),
+        ));
   }
 }

@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:get/get.dart' as g;
+import 'package:get/get.dart' hide FormData, MultipartFile;
 import 'package:image_picker/image_picker.dart';
 
 class UseCamera extends StatefulWidget {
@@ -41,7 +41,7 @@ class _UseCameraState extends State<UseCamera> {
       dio.options.contentType = "multipart/form-data";
       final res = await dio.post("${dotenv.get('FLASK_BASE_URL')}/predict/", data: _formData )
         .then((res) {
-          g.Get.back();
+          Get.back();
           return res.data;
         });
 

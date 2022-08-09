@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:client/controllers/dropdown-controller.dart';
+import 'package:client/controllers/main-map-controller.dart';
 import 'package:client/pages/loading.dart';
 import 'package:client/utils/geolocator-service.dart';
 import 'package:client/pages/main-drawer.dart';
@@ -10,179 +11,127 @@ import 'package:geolocator/geolocator.dart';
 import 'package:naver_map_plugin/naver_map_plugin.dart';
 import 'package:get/get.dart'; // 상태관리용 GetX 패키지
 
-NaverMapBody naverMapBody = NaverMapBody();
+class NaverMapWidget extends StatelessWidget {
+  NaverMapWidget({Key? key}) : super(key: key);
 
-class NaverMapWidget extends StatefulWidget {
-  const NaverMapWidget({Key? key}) : super(key: key);
-
-  @override
-  NaverMapBody createState() => naverMapBody;
-}
-
-//Naver map
-class NaverMapBody extends State {
-  List<Marker> _markers = [];
-  Completer<NaverMapController> _controller = Completer();
-  MapType _mapType = MapType.Basic;
-  Position? position;
-  int? type = null;
-
-  //마커에 쓰레기통 정보를 띄우기 위한 변수들
-  String address = '';
-  List<String> trashcanStringType = ['쓰레기통', '일반 쓰레기통', '재활용 쓰레기통'];
-  int trashcanType = 0;
-  int? trashcanId;
-
-  bool isVisible = false;
-
-  setMarker(List coordinates) {
-    setState(() {
-      _markers.clear();
-      for (final coordinate in coordinates) {
-        _markers.add(
-          Marker(
-            markerId: coordinate['id'].toString(),
-            position: LatLng(double.parse(coordinate['latitude']),
-                double.parse(coordinate['longitude'])),
-            width: 20,
-            height: 30,
-            onMarkerTab: (marker, iconSize) {
-              setState(() {
-                address = coordinate['address'];
-                trashcanType = coordinate['type'];
-                trashcanId = coordinate['id'];
-                isVisible = true;
-              });
-            },
-          ),
-        );
-      }
-    });
-  }
-
-  //앱시작시, 사용자 위치 근처 마커들을 표시
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance?.addPostFrameCallback((_) {
-      _initGetCoordinate();
-    });
-  }
-
-  //앱시작시, 사용자 위치 근처 마커들을 표시하는 함수. initState에 들어간다.
-  _initGetCoordinate() async {
-    position = await GeolocatorService().getCurrentPosition();
-    final latitude = position!.latitude;
-    final longitude = position!.longitude;
-
-    final data = await coordinates(latitude, longitude, type);
-    setMarker(data);
-  }
+  MainMapController mainMapController = Get.put(MainMapController());
 
   @override
   Widget build(BuildContext context) {
-    if (position == null) {
-      return LoadingScreen();
-    }
-
-    return Container(
-      child: Stack(
-        children: [
-          NaverMap(
-            onMapCreated: _onMapCreated,
-            mapType: _mapType,
-            initialCameraPosition: CameraPosition(
-              target: LatLng(position!.latitude, position!.longitude),
-            ),
-            locationButtonEnable: true,
-            markers: _markers.toList(),
-            onMapTap: (position) {
-              setState(() {
-                isVisible = false;
-              });
-            },
-          ),
-          Align(
-              alignment: Alignment.bottomRight,
-              child: RefreshBtn(
-                controller: _controller,
-              )),
-          Align(
-            alignment: Alignment.topCenter,
-            child: TrashClassificationDropdownButton(), // 쓰레기통 종류 드랍다운
-          ),
-          Positioned(
-            bottom: 10,
-            left: 20,
-            child: Visibility(
-              child: Container(
-                width: 335,
-                height: 150,
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: Colors.green,
-                    width: 5,
-                  ),
-                  borderRadius: BorderRadius.circular(20),
-                  color: Colors.white,
+    return GetBuilder<MainMapController>(
+      init: MainMapController(),
+      builder: (_) {
+        if (mainMapController.position == null) {
+          return LoadingScreen();
+        }
+        return Container(
+          child: Stack(
+            children: [
+              NaverMap(
+                onMapCreated: _onMapCreated,
+                mapType: mainMapController.mapType,
+                initialCameraPosition: CameraPosition(
+                  target: LatLng(mainMapController.position?.latitude,
+                      mainMapController.position?.longitude),
                 ),
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Text(
-                        address,
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      Text(trashcanStringType[trashcanType],
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w500,
-                          )),
-                      OutlinedButton(
-                          onPressed: () {
-                            applyCleaning(trashcanId!, 1);
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) => AlertDialog(
-                                  title: const Text('쓰레기통 청소신청'),
-                                  content: const Text('쓰레기통 청소신청이 완료되었습니다.'),
-                                  actions: <Widget>[
-                                    TextButton(
-                                      onPressed: () =>
-                                          Navigator.of(context).pop(),
-                                      child: const Text('확인'),
-                                    ),
-                                  ]),
-                            );
-                          },
-                          child: Text("청소신청"))
-                    ],
-                  ),
-                ),
+                locationButtonEnable: true,
+                markers: mainMapController.markers.toList(),
+                onMapTap: (position) {
+                  mainMapController.falseIsVisible();
+                },
               ),
-              visible: isVisible,
-            ),
-          )
-        ],
-      ),
+              Align(
+                  alignment: Alignment.bottomRight,
+                  child: RefreshBtn(
+                    controller: mainMapController.controller,
+                  )),
+              Align(
+                alignment: Alignment.topCenter,
+                child: TrashClassificationDropdownButton(
+                  controller: mainMapController.controller,
+                ), // 쓰레기통 종류 드랍다운
+              ),
+              Positioned(
+                bottom: 10,
+                left: 20,
+                child: Visibility(
+                  child: Container(
+                    width: 335,
+                    height: 150,
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: Colors.green,
+                        width: 5,
+                      ),
+                      borderRadius: BorderRadius.circular(20),
+                      color: Colors.white,
+                    ),
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Text(
+                            mainMapController.address,
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          Text(
+                              mainMapController.trashcanStringType[
+                                  mainMapController.trashcanType],
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.w500,
+                              )),
+                          OutlinedButton(
+                              onPressed: () {
+                                applyCleaning(mainMapController.trashcanId!, 1);
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) =>
+                                      AlertDialog(
+                                          title: const Text('쓰레기통 청소신청'),
+                                          content:
+                                              const Text('쓰레기통 청소신청이 완료되었습니다.'),
+                                          actions: <Widget>[
+                                        TextButton(
+                                          onPressed: () =>
+                                              Navigator.of(context).pop(),
+                                          child: const Text('확인'),
+                                        ),
+                                      ]),
+                                );
+                              },
+                              child: Text("청소신청"))
+                        ],
+                      ),
+                    ),
+                  ),
+                  visible: mainMapController.isVisible,
+                ),
+              )
+            ],
+          ),
+        );
+      },
     );
   }
 
   void _onMapCreated(NaverMapController controller) {
-    if (_controller.isCompleted) _controller = Completer();
-    _controller.complete(controller);
+    if (mainMapController.controller.isCompleted)
+      mainMapController.controller = Completer();
+    mainMapController.controller.complete(controller);
   }
 }
 
 //새로고침으로 근처 쓰레기통 마커를 가져오는 버튼
 class RefreshBtn extends StatelessWidget {
-  const RefreshBtn(
-      {Key? key, required Completer<NaverMapController> controller})
+  RefreshBtn({Key? key, required Completer<NaverMapController> controller})
       : this._controller = controller,
         super(key: key);
+
+  MainMapController mainMapController = Get.put(MainMapController());
 
   final Completer<NaverMapController> _controller;
 
@@ -192,9 +141,8 @@ class RefreshBtn extends StatelessWidget {
     final double latitude = xy.target.latitude;
     final double longitude = xy.target.longitude;
     //카메라 주변 쓰레기통 좌표들을 가져온다.
-    final data = await coordinates(latitude, longitude, naverMapBody.type);
-
-    naverMapBody.setMarker(data);
+    final data = await coordinates(latitude, longitude, mainMapController.type);
+    mainMapController.setMarker(data);
   }
 
   @override
@@ -214,10 +162,26 @@ class RefreshBtn extends StatelessWidget {
 
 // 쓰레기통종류 드랍다운 버튼 with GetX
 class TrashClassificationDropdownButton extends StatelessWidget {
-  TrashClassificationDropdownButton({Key? key}) : super(key: key);
+  TrashClassificationDropdownButton(
+      {Key? key, required Completer<NaverMapController> controller})
+      : this._controller = controller,
+        super(key: key);
 
   DropdownController dropdownController =
       Get.put(DropdownController()); // DropdownController 의존성 주입
+  MainMapController mainMapController = Get.put(MainMapController());
+
+  final Completer<NaverMapController> _controller;
+
+  refresh() async {
+    final controller = await _controller.future;
+    final xy = await controller.getCameraPosition();
+    final double latitude = xy.target.latitude;
+    final double longitude = xy.target.longitude;
+    //카메라 주변 쓰레기통 좌표들을 가져온다.
+    final data = await coordinates(latitude, longitude, mainMapController.type);
+    mainMapController.setMarker(data);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -250,19 +214,20 @@ class TrashClassificationDropdownButton extends StatelessWidget {
               color: Colors.black,
               fontSize: 18,
             ),
-            onChanged: (String? data) {
+            onChanged: (String? data) async {
               dropdownController.dropdownValue.value = data!;
               switch (data) {
                 case '일반 쓰레기통':
-                  naverMapBody.type = 1;
+                  mainMapController.type = 1;
                   break;
                 case '재활용 쓰레기통':
-                  naverMapBody.type = 2;
+                  mainMapController.type = 2;
                   break;
                 default:
-                  naverMapBody.type = null;
+                  mainMapController.type = null;
                   break;
               }
+              await refresh();
             },
             items: dropdownController.valueList.map((String value) {
               return DropdownMenuItem(

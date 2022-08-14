@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.smu-capstone-bigdata.client">
+    package="com.smu_capstone_bigdata.client">
    <application
         android:label="가로쓰레기통 알리미"
         android:name="${applicationName}"

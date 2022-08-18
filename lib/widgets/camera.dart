@@ -11,9 +11,6 @@ import 'package:geolocator/geolocator.dart';
 class UseCamera extends StatelessWidget {
   final controller = Get.put(CameraController());
 
-  MainMapController mainMapController =
-      Get.put(MainMapController()); // MainMapController 의존성 주입
-
   @override
   Widget build(BuildContext context) {
     return IconButton(

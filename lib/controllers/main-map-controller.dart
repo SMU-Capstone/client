@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:client/utils/geolocator-service.dart';
 
+//맵 컨트롤러는 하나만 존재해야 합니다.
 MainMapController mainMapController = Get.put(MainMapController());
 
 class MainMapController extends GetxController {
@@ -107,22 +108,13 @@ class MainMapController extends GetxController {
   @override
   void nearestTrashcan() async {
     position = await GeolocatorService().getCurrentPosition();
-    final latitude = mainMapController.position?.latitude;
-    final longitude = mainMapController.position?.longitude;
+    final latitude = position?.latitude;
+    final longitude = position?.longitude;
 
-    dynamic nearestTrashcan = await getNearestTrashcan(
-        latitude!, longitude!, mainMapController.analysisData);
+    final nearestTrashcan = await coordinates(
+        latitude!, longitude!, analysisData);
 
-    if (nearestTrashcan == "") {
-      print("주변에 쓰레기통이 없습니다.");
-      nearestTrashcan =
-          await getNearestTrashcan(37.602638, 126.955252, analysisData);
-    }
-
-    address = nearestTrashcan['address'];
-    trashcanId = nearestTrashcan['id'];
-    trashcanType = nearestTrashcan['type'];
-    isVisible = true;
+    setMarker(nearestTrashcan);
 
     update();
   }

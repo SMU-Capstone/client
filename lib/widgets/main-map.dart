@@ -36,7 +36,7 @@ class NaverMapWidget extends StatelessWidget {
                 locationButtonEnable: true,
                 markers: mainMapController.markers.toList(),
                 onMapTap: (position) {
-                  mainMapController.falseIsVisible();
+                  mainMapController.isVisible = false;
                 },
               ),
               Align(

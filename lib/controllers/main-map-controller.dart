@@ -100,12 +100,6 @@ class MainMapController extends GetxController {
   }
 
   @override
-  void falseIsVisible() {
-    isVisible = false;
-    update();
-  }
-
-  @override
   void nearestTrashcan() async {
     position = await GeolocatorService().getCurrentPosition();
     final latitude = position?.latitude;

@@ -14,7 +14,6 @@ import 'package:get/get.dart'; // 상태관리용 GetX 패키지
 class NaverMapWidget extends StatelessWidget {
   NaverMapWidget({Key? key}) : super(key: key);
 
-  MainMapController mainMapController = Get.put(MainMapController());
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +36,7 @@ class NaverMapWidget extends StatelessWidget {
                 locationButtonEnable: true,
                 markers: mainMapController.markers.toList(),
                 onMapTap: (position) {
-                  mainMapController.falseIsVisible();
+                  mainMapController.isVisible = false;
                 },
               ),
               Align(
@@ -131,7 +130,6 @@ class RefreshBtn extends StatelessWidget {
       : this._controller = controller,
         super(key: key);
 
-  MainMapController mainMapController = Get.put(MainMapController());
 
   final Completer<NaverMapController> _controller;
 
@@ -169,7 +167,6 @@ class TrashClassificationDropdownButton extends StatelessWidget {
 
   DropdownController dropdownController =
       Get.put(DropdownController()); // DropdownController 의존성 주입
-  MainMapController mainMapController = Get.put(MainMapController());
 
   final Completer<NaverMapController> _controller;
 

@@ -18,6 +18,7 @@ class MainMapController extends GetxController {
   List<String> _trashcanStringType = ['쓰레기통', '일반 쓰레기통', '재활용 쓰레기통'];
   int _trashcanType = 0;
   int? _trashcanId;
+  String _trashcanFullYn = 'N';
   bool _isVisible = false;
 
   List<Marker> _markers = [];
@@ -48,11 +49,13 @@ class MainMapController extends GetxController {
   List<String> get trashcanStringType => _trashcanStringType;
   int get trashcanType => _trashcanType;
   int? get trashcanId => _trashcanId;
+  String get trashcanFullYn => _trashcanFullYn;
   bool get isVisible => _isVisible;
 
   set address(String address) => _address = address;
   set trashcanType(int type) => _trashcanType = type;
   set trashcanId(int? id) => _trashcanId = id;
+  set trashcanFullYn(String yn) => _trashcanFullYn = yn;
   set isVisible(bool bool) => _isVisible = bool;
 
   @override
@@ -105,8 +108,8 @@ class MainMapController extends GetxController {
     final latitude = position?.latitude;
     final longitude = position?.longitude;
 
-    final nearestTrashcan = await coordinates(
-        latitude!, longitude!, analysisData);
+    final nearestTrashcan =
+        await coordinates(latitude!, longitude!, analysisData);
 
     setMarker(nearestTrashcan);
 

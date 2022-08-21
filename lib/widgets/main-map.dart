@@ -14,7 +14,6 @@ import 'package:get/get.dart'; // 상태관리용 GetX 패키지
 class NaverMapWidget extends StatelessWidget {
   NaverMapWidget({Key? key}) : super(key: key);
 
-
   @override
   Widget build(BuildContext context) {
     return GetBuilder<MainMapController>(
@@ -50,6 +49,8 @@ class NaverMapWidget extends StatelessWidget {
                   controller: mainMapController.controller,
                 ), // 쓰레기통 종류 드랍다운
               ),
+
+              // 쓰레기통 정보 표시
               Positioned(
                 bottom: 10,
                 left: 20,
@@ -83,26 +84,44 @@ class NaverMapWidget extends StatelessWidget {
                                 fontSize: 20,
                                 fontWeight: FontWeight.w500,
                               )),
-                          OutlinedButton(
-                              onPressed: () {
-                                applyCleaning(mainMapController.trashcanId!, 1);
-                                showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) =>
-                                      AlertDialog(
-                                          title: const Text('쓰레기통 청소신청'),
-                                          content:
-                                              const Text('쓰레기통 청소신청이 완료되었습니다.'),
-                                          actions: <Widget>[
-                                        TextButton(
-                                          onPressed: () =>
-                                              Navigator.of(context).pop(),
-                                          child: const Text('확인'),
-                                        ),
-                                      ]),
-                                );
-                              },
-                              child: Text("청소신청"))
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              // 쓰레기통 찼는지 여부
+                              (() {
+                                if (mainMapController.trashcanFullYn == 'Y') {
+                                  return const Icon(Icons.remove_circle_outline,
+                                      color: Colors.red);
+                                } else {
+                                  return const Icon(
+                                    Icons.check_circle_outline,
+                                    color: Colors.green,
+                                  );
+                                }
+                              })(),
+                              OutlinedButton(
+                                  onPressed: () {
+                                    applyCleaning(
+                                        mainMapController.trashcanId!, 1);
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) =>
+                                          AlertDialog(
+                                              title: const Text('쓰레기통 청소신청'),
+                                              content: const Text(
+                                                  '쓰레기통 청소신청이 완료되었습니다.'),
+                                              actions: <Widget>[
+                                            TextButton(
+                                              onPressed: () =>
+                                                  Navigator.of(context).pop(),
+                                              child: const Text('확인'),
+                                            ),
+                                          ]),
+                                    );
+                                  },
+                                  child: Text("청소신청")),
+                            ],
+                          )
                         ],
                       ),
                     ),
@@ -129,7 +148,6 @@ class RefreshBtn extends StatelessWidget {
   RefreshBtn({Key? key, required Completer<NaverMapController> controller})
       : this._controller = controller,
         super(key: key);
-
 
   final Completer<NaverMapController> _controller;
 

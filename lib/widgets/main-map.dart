@@ -37,19 +37,13 @@ class NaverMapWidget extends StatelessWidget {
                 locationButtonEnable: true,
                 markers: mainMapController.markers.toList(),
                 onMapTap: (position) {
-                  mainMapController.isVisible = false;
+                  mainMapController.falseIsVisible();
                 },
               ),
-              Align(
-                  alignment: Alignment.bottomRight,
-                  child: RefreshBtn(
-                    controller: mainMapController.controller,
-                  )),
+              Align(alignment: Alignment.bottomRight, child: RefreshBtn()),
               Align(
                 alignment: Alignment.topCenter,
-                child: TrashClassificationDropdownButton(
-                  controller: mainMapController.controller,
-                ), // 쓰레기통 종류 드랍다운
+                child: TrashClassificationDropdownButton(), // 쓰레기통 종류 드랍다운
               ),
 
               // 쓰레기통 정보 표시
@@ -147,14 +141,10 @@ class NaverMapWidget extends StatelessWidget {
 
 //새로고침으로 근처 쓰레기통 마커를 가져오는 버튼
 class RefreshBtn extends StatelessWidget {
-  RefreshBtn({Key? key, required Completer<NaverMapController> controller})
-      : this._controller = controller,
-        super(key: key);
-
-  final Completer<NaverMapController> _controller;
+  RefreshBtn({Key? key}) : super(key: key);
 
   refresh() async {
-    final controller = await _controller.future;
+    final controller = await mainMapController.controller.future;
     final xy = await controller.getCameraPosition();
     final double latitude = xy.target.latitude;
     final double longitude = xy.target.longitude;
@@ -180,18 +170,13 @@ class RefreshBtn extends StatelessWidget {
 
 // 쓰레기통종류 드랍다운 버튼 with GetX
 class TrashClassificationDropdownButton extends StatelessWidget {
-  TrashClassificationDropdownButton(
-      {Key? key, required Completer<NaverMapController> controller})
-      : this._controller = controller,
-        super(key: key);
+  TrashClassificationDropdownButton({Key? key}) : super(key: key);
 
   DropdownController dropdownController =
       Get.put(DropdownController()); // DropdownController 의존성 주입
 
-  final Completer<NaverMapController> _controller;
-
   refresh() async {
-    final controller = await _controller.future;
+    final controller = await mainMapController.controller.future;
     final xy = await controller.getCameraPosition();
     final double latitude = xy.target.latitude;
     final double longitude = xy.target.longitude;

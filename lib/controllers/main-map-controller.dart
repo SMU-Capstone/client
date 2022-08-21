@@ -79,6 +79,29 @@ class MainMapController extends GetxController {
     update();
   }
 
+  void setSingleMarker(dynamic coordinate) {
+    markers.clear();
+
+    markers.add(
+      Marker(
+        markerId: coordinate['id'].toString(),
+        position: LatLng(double.parse(coordinate['latitude']),
+            double.parse(coordinate['longitude'])),
+        width: 20,
+        height: 30,
+        onMarkerTab: (marker, iconSize) {
+          address = coordinate['address'];
+          trashcanType = coordinate['type'];
+          trashcanId = coordinate['id'];
+          isVisible = true;
+          update();
+        },
+      ),
+    );
+
+    update();
+  }
+
   @override
   void onInit() {
     super.onInit();
@@ -104,12 +127,32 @@ class MainMapController extends GetxController {
     position = await GeolocatorService().getCurrentPosition();
     final latitude = position?.latitude;
     final longitude = position?.longitude;
+    final mapController = await controller.future;
+
+    // final latitude = 37.602638;
+    // final longitude = 126.955252; 테스트용 좌표입니다.
 
     final nearestTrashcan =
-        await coordinates(latitude!, longitude!, analysisData);
+        await getNearestTrashcan(latitude!, longitude!, analysisData);
 
-    setMarker(nearestTrashcan);
+    address = nearestTrashcan['address'];
+    trashcanId = nearestTrashcan['id'];
+    trashcanType = nearestTrashcan['type'];
+    isVisible = true;
 
+    setSingleMarker(nearestTrashcan);
+
+    CameraUpdate cameraUpdate = CameraUpdate.toCameraPosition(CameraPosition(
+        target: LatLng(double.parse(nearestTrashcan['latitude']),
+            double.parse(nearestTrashcan['longitude']))));
+
+    mapController.moveCamera(cameraUpdate);
+
+    update();
+  }
+
+  falseIsVisible() {
+    isVisible = false;
     update();
   }
 }

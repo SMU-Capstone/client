@@ -8,9 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:client/utils/geolocator-service.dart';
 
-//맵 컨트롤러는 하나만 존재해야 합니다.
-MainMapController mainMapController = Get.put(MainMapController());
-
 class MainMapController extends GetxController {
   int _analysisData = 1;
 

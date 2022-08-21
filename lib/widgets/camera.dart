@@ -4,9 +4,10 @@ import 'package:client/utils/geolocator-service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-import 'main-map.dart';
 import 'package:client/utils/main-service.dart';
 import 'package:geolocator/geolocator.dart';
+
+MainMapController mainMapController = Get.put(MainMapController());
 
 class UseCamera extends StatelessWidget {
   final controller = Get.put(CameraController());

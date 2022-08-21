@@ -11,6 +11,8 @@ import 'package:geolocator/geolocator.dart';
 import 'package:naver_map_plugin/naver_map_plugin.dart';
 import 'package:get/get.dart'; // 상태관리용 GetX 패키지
 
+MainMapController mainMapController = Get.put(MainMapController());
+
 class NaverMapWidget extends StatelessWidget {
   NaverMapWidget({Key? key}) : super(key: key);
 

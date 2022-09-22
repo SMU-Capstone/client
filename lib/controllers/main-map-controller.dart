@@ -15,7 +15,7 @@ class MainMapController extends GetxController {
   List<String> _trashcanStringType = ['쓰레기통', '일반 쓰레기통', '재활용 쓰레기통'];
   int _trashcanType = 0;
   int? _trashcanId;
-  String _trashcanFullYn = 'N';
+  int _trashcanFullCount = 0;
   bool _isVisible = false;
 
   List<Marker> _markers = [];
@@ -46,13 +46,13 @@ class MainMapController extends GetxController {
   List<String> get trashcanStringType => _trashcanStringType;
   int get trashcanType => _trashcanType;
   int? get trashcanId => _trashcanId;
-  String get trashcanFullYn => _trashcanFullYn;
+  int? get trashcanFullCount => _trashcanFullCount;
   bool get isVisible => _isVisible;
 
   set address(String address) => _address = address;
   set trashcanType(int type) => _trashcanType = type;
   set trashcanId(int? id) => _trashcanId = id;
-  set trashcanFullYn(String yn) => _trashcanFullYn = yn;
+  set trashcanFullCount(int? count) => _trashcanFullCount = count!;
   set isVisible(bool bool) => _isVisible = bool;
 
   @override
@@ -70,6 +70,7 @@ class MainMapController extends GetxController {
             address = coordinate['address'];
             trashcanType = coordinate['type'];
             trashcanId = coordinate['id'];
+            trashcanFullCount = coordinate['logCount'];
             isVisible = true;
             update();
           },
@@ -93,6 +94,7 @@ class MainMapController extends GetxController {
           address = coordinate['address'];
           trashcanType = coordinate['type'];
           trashcanId = coordinate['id'];
+          trashcanFullCount = coordinate['logCount'];
           isVisible = true;
           update();
         },
@@ -125,12 +127,12 @@ class MainMapController extends GetxController {
   @override
   void nearestTrashcan() async {
     position = await GeolocatorService().getCurrentPosition();
-    final latitude = position?.latitude;
-    final longitude = position?.longitude;
+    // final latitude = position?.latitude;
+    // final longitude = position?.longitude;
     final mapController = await controller.future;
 
-    // final latitude = 37.602638;
-    // final longitude = 126.955252; 테스트용 좌표입니다.
+    final latitude = 37.602638;
+    final longitude = 126.955252; //테스트용 좌표입니다.
 
     final nearestTrashcan =
         await getNearestTrashcan(latitude!, longitude!, analysisData);
@@ -138,6 +140,7 @@ class MainMapController extends GetxController {
     address = nearestTrashcan['address'];
     trashcanId = nearestTrashcan['id'];
     trashcanType = nearestTrashcan['type'];
+    trashcanFullCount = nearestTrashcan['logCount'];
     isVisible = true;
 
     setSingleMarker(nearestTrashcan);

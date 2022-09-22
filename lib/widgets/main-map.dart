@@ -85,7 +85,7 @@ class NaverMapWidget extends StatelessWidget {
                             children: [
                               // 쓰레기통 찼는지 여부
                               (() {
-                                if (mainMapController.trashcanFullYn == 'Y') {
+                                if (mainMapController.trashcanFullCount! > 0) {
                                   return const Icon(Icons.remove_circle_outline,
                                       color: Colors.red);
                                 } else {

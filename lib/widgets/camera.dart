@@ -19,16 +19,7 @@ class UseCamera extends StatelessWidget {
         //카메라 버튼이 눌렸을 경우 실행되는 함수
         final data = await controller.getImage(ImageSource.camera);
         final label = data['predicted_label'];
-        if (label == '고철류' ||
-            label == '도기류' ||
-            label == '스티로폼' ||
-            label == '유리병' ||
-            label == '자전거' ||
-            label == '전자제품' ||
-            label == '캔류' ||
-            label == '페트병' ||
-            label == '플라스틱류' ||
-            label == '형광등') {
+        if (label == '고철(캔)' || label == '유리병' || label == '플라스틱(페트병)') {
           mainMapController.analysisData = 2;
         } else {
           mainMapController.analysisData = 1;

@@ -127,12 +127,12 @@ class MainMapController extends GetxController {
   @override
   void nearestTrashcan() async {
     position = await GeolocatorService().getCurrentPosition();
-    // final latitude = position?.latitude;
-    // final longitude = position?.longitude;
+    final latitude = position?.latitude;
+    final longitude = position?.longitude;
     final mapController = await controller.future;
 
-    final latitude = 37.602638;
-    final longitude = 126.955252; //테스트용 좌표입니다.
+    // final latitude = 37.602638;
+    // final longitude = 126.955252; //테스트용 좌표입니다.
 
     final nearestTrashcan =
         await getNearestTrashcan(latitude!, longitude!, analysisData);

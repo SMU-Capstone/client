@@ -143,6 +143,8 @@ class MainMapController extends GetxController {
     trashcanFullCount = nearestTrashcan['logCount'];
     isVisible = true;
 
+    print(nearestTrashcan);
+
     setSingleMarker(nearestTrashcan);
 
     CameraUpdate cameraUpdate = CameraUpdate.toCameraPosition(CameraPosition(
